@@ -92,36 +92,84 @@ router.post('/', (req, res, next) => {
 
 });
 
+router.get('/findByBoardgameId/:boardgameId', (req, res, next) => {
+    const id = req.params.boardgameId;
+
+    Boardgame.find({ _id: id })
+    .exec()
+    .then(doc => {
+        if(doc){
+            res.status(200).json({
+                    product: doc
+            });
+        }else{
+            res.status(404).json({
+                message: 'Boardgame' + id + 'does not exist'
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+router.get('/findByName/:boardgameName', (req, res, next) => {
+    const name = req.params.boardgameName;
+
+    Product.find({ name: name })
+    .exec()
+    .then(doc => {
+        if(doc){
+            res.status(200).json({
+                product: doc
+            });
+        }else{
+            res.status(404).json({
+                message: 'Boardgame name ' + name + ' does not exist'
+            });
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        })
+    });
+});
+
 router.get('/findByFilter/:boardgame', (req, res, next) => {
     const boardgame = JSON.parse(req.params.boardgame);
     const category = boardgame.category;
 
-    Product.find({category: { $elemMatch: {category} }})
+    Boardgame.find({category: { $elemMatch: {category} }})
     .exec()
     .then(docs => {
         const response = {
             count: docs.length,
-            product: docs.map(doc => {
+            boardgame: docs.map(doc => {
                 return {
                     _id: doc._id,
-                    dlcId: doc.dlcId,
-                    achievementId: doc.achievementId,
                     name: doc.name,
-                    price: doc.price,
-                    publisher: doc.publisher,
+                    boardgame_url: doc.boardgame_url,
+                    boardgame_id: doc.boardgame_id,
+                    image_url: doc.image_url,
+                    age: doc.age,
                     category: doc.category,
-                    typeOfPlaying: doc.typeOfPlaying,
-                    releaseDate: doc.releaseDate,
-                    developer: doc.developer,
-                    size: doc.size,
-                    language: doc.language,
-                    ageRate: doc.ageRate,
-                    platform: doc.platform,
-                    productImage: doc.productImage
+                    designer: doc.designer,
+                    complexity: doc.complexity,
+                    year: doc.year,
+                    min_time: doc.min_time,
+                    max_time: doc.max_time,
+                    avg_time: doc.avg_time,
+                    min_player: doc.min_player,
+                    max_player: doc.max_player,
+                    avg_rating: doc.avg_rating
                 };
             })
         };
-
         res.status(200).json(response);
     })
     .catch(err => {
@@ -131,6 +179,7 @@ router.get('/findByFilter/:boardgame', (req, res, next) => {
         });
     });
 });
+
 
 router.patch('/update/:boardgameId', (req, res, next) => {
     const id = req.params.boardgameId;
