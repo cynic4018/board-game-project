@@ -100,7 +100,7 @@ router.get('/findByBoardgameId/:boardgameId', (req, res, next) => {
     .then(doc => {
         if(doc){
             res.status(200).json({
-                    product: doc
+                    boardgame: doc
             });
         }else{
             res.status(404).json({
@@ -124,7 +124,7 @@ router.get('/findByName/:boardgameName', (req, res, next) => {
     .then(doc => {
         if(doc){
             res.status(200).json({
-                product: doc
+                boardgame: doc
             });
         }else{
             res.status(404).json({
