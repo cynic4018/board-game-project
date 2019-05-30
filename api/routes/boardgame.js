@@ -191,47 +191,57 @@ router.get('/findByCategory/:boardgameCategory', (req, res, next) => {
     });
 });
 
-router.get('/findByFilter/:boardgame', (req, res, next) => {
-    const boardgame = JSON.parse(req.params.boardgame);
+router.get('/findByFilter/:boardgameDetails', (req, res, next) => {
+    const boardgame = JSON.parse(req.params.boardgameDetails);
+    const name = boardgame.name;
+    const price = boardgame.price;
     const category = boardgame.category;
+    const age = boardgame.age;
 
-    Boardgame.find({category: { $elemMatch: {category} }})
-    .exec()
-    .then(docs => {
-        const response = {
-            count: docs.length,
-            boardgame: docs.map(doc => {
-                return {
-                    _id: doc._id,
-                    name: doc.name,
-                    price: doc.price,
-                    boardgame_url: doc.boardgame_url,
-                    boardgame_id: doc.boardgame_id,
-                    image_url: doc.image_url,
-                    age: doc.age,
-                    category: doc.category,
-                    designer: doc.designer,
-                    complexity: doc.complexity,
-                    year: doc.year,
-                    min_time: doc.min_time,
-                    max_time: doc.max_time,
-                    avg_time: doc.avg_time,
-                    min_player: doc.min_player,
-                    max_player: doc.max_player,
-                    avg_rating: doc.avg_rating
-                };
-            })
-        };
-        res.status(200).json(response);
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
-        });
-    });
+    // Boardgame.find({ $and: [ {name: name},
+    //                 {price: {$gte: price[0], $lte: price[1] }},
+    //                 {category: category} ]
+    //                 })
+    
+    Boardgame.find( { $and: [{name: name},
+                    {price: {$gte: price[0], $lte: price[1] }},
+                    {category: category}] }
+                    )
+     .exec()
+     .then(docs => {
+         const response = {
+             count: docs.length,
+             boardgame: docs.map(doc => {
+                 return {
+                     _id: doc._id,
+                     name: doc.name,
+                     price: doc.price,
+                     boardgame_url: doc.boardgame_url,
+                     boardgame_id: doc.boardgame_id,
+                     image_url: doc.image_url,
+                     age: doc.age,
+                     category: doc.category,
+                     designer: doc.designer,
+                     complexity: doc.complexity,
+                     year: doc.year,
+                     min_time: doc.min_time,
+                     max_time: doc.max_time,
+                     avg_time: doc.avg_time,
+                     min_player: doc.min_player,
+                     max_player: doc.max_player,
+                     avg_rating: doc.avg_rating
+                 };
+             })
+         };
+         res.status(200).json(response);
+     })
+     .catch(err => {
+         console.log(err);
+         res.status(500).json({
+             error: err
+         });
+     });
 });
-
 
 router.patch('/update/:boardgameId', (req, res, next) => {
     const id = req.params.boardgameId;
@@ -273,15 +283,13 @@ router.delete('/delete/:boardgameId', (req, res, next) => {
         });
 });
 
-module.exports = router;
-
 router.delete('/deleteName/:boardgameName', (req, res, next) => {
     const bgName = req.params.boardgameName;
     Boardgame.remove({ name: bgName })
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Boardgame: ' + name + ' is deleted!!'
+                message: 'Boardgame: ' + bgName + ' is deleted!!'
             });
         })
         .catch(err => {
@@ -291,3 +299,5 @@ router.delete('/deleteName/:boardgameName', (req, res, next) => {
             });
         });
 });
+
+module.exports = router;

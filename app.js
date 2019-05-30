@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const boardgameRoutes = require('./api/routes/boardgame');
-// const orderRoutes = require('./api/routes/order');
+const orderRoutes = require('./api/routes/order');
 
 //Connect with mongodb cloud(cluster)
 mongoose.connect('mongodb+srv://board-game-acc:'+ 
@@ -39,7 +39,7 @@ app.use((req, res, next)=>{
 
 // Route which should handle requests
 app.use('/boardgame', boardgameRoutes);
-// app.use('/order', orderRoutes);
+app.use('/order', orderRoutes);
 
 app.use((req, res, next)=>{
     const error = new Error('Not found');
