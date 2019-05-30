@@ -6,7 +6,7 @@ const Boardgame = require('../models/boardgame');
 
 router.get('/', (req, res, next) => {
     Boardgame.find()
-        .select('_id name boardgame_url boardgame_id image_url age category designer complexity year min_time max_time avg_time min_player max_player avg_rating')
+        .select('_id name price boardgame_url boardgame_id image_url age category designer complexity year min_time max_time avg_time min_player max_player avg_rating')
         .exec()
         .then(docs => {
             res.status(200).json({
@@ -15,6 +15,7 @@ router.get('/', (req, res, next) => {
                     return {
                         _id: doc._id,
                         name: doc.name,
+                        price: doc.price,
                         boardgame_url: doc.boardgame_url,
                         boardgame_id: doc.boardgame_id,
                         image_url: doc.image_url,
@@ -44,6 +45,7 @@ router.post('/', (req, res, next) => {
     const boardgame = new Boardgame({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
+        price: req.body.price,
         boardgame_url: req.body.boardgame_url,
         boardgame_id: req.body.boardgame_id,
         image_url: req.body.image_url,
@@ -67,6 +69,7 @@ router.post('/', (req, res, next) => {
                 boardgame: {
                     _id: result._id,
                     name: result.name,
+                    price: result.price,
                     boardgame_url: result.boardgame_url,
                     boardgame_id: result.boardgame_id,
                     image_url: result.image_url,
@@ -119,7 +122,7 @@ router.get('/findByBoardgameId/:boardgameId', (req, res, next) => {
 router.get('/findByName/:boardgameName', (req, res, next) => {
     const name = req.params.boardgameName;
 
-    Product.find({ name: name })
+    Boardgame.find({ name: name })
     .exec()
     .then(doc => {
         if(doc){
@@ -129,6 +132,54 @@ router.get('/findByName/:boardgameName', (req, res, next) => {
         }else{
             res.status(404).json({
                 message: 'Boardgame name ' + name + ' does not exist'
+            });
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        })
+    });
+});
+
+router.get('/findByAge/:boardgameAge', (req, res, next) => {
+    const age = req.params.boardgameAge;
+
+    Boardgame.find({ age: age })
+    .exec()
+    .then(doc => {
+        if(doc){
+            res.status(200).json({
+                boardgame: doc
+            });
+        }else{
+            res.status(404).json({
+                message: 'Boardgame age' + age + ' does not exist'
+            });
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        })
+    });
+});
+
+router.get('/findByCategory/:boardgameCategory', (req, res, next) => {
+    const category = req.params.boardgameCategory;
+
+    Boardgame.find({ category: category })
+    .exec()
+    .then(doc => {
+        if(doc){
+            res.status(200).json({
+                boardgame: doc
+            });
+        }else{
+            res.status(404).json({
+                message: 'Boardgame category' + category + ' does not exist'
             });
         }
     })
@@ -153,6 +204,7 @@ router.get('/findByFilter/:boardgame', (req, res, next) => {
                 return {
                     _id: doc._id,
                     name: doc.name,
+                    price: doc.price,
                     boardgame_url: doc.boardgame_url,
                     boardgame_id: doc.boardgame_id,
                     image_url: doc.image_url,
@@ -222,3 +274,20 @@ router.delete('/delete/:boardgameId', (req, res, next) => {
 });
 
 module.exports = router;
+
+router.delete('/deleteName/:boardgameName', (req, res, next) => {
+    const bgName = req.params.boardgameName;
+    Boardgame.remove({ name: bgName })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Boardgame: ' + name + ' is deleted!!'
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+});

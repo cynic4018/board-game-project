@@ -8,9 +8,9 @@ const boardgameRoutes = require('./api/routes/boardgame');
 // const orderRoutes = require('./api/routes/order');
 
 //Connect with mongodb cloud(cluster)
-mongoose.connect('mongodb+srv://board-game:'+
+mongoose.connect('mongodb+srv://board-game-acc:'+ 
     process.env.MONGO_ATLAS_PW +
-    '@board-game-ja8s0.mongodb.net/test?retryWrites=true', 
+    '@board-game-project-nhoof.mongodb.net/test?retryWrites=true&w=majority',
     {
         useNewUrlParser: true
     }
